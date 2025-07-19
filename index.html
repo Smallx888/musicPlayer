@@ -18,21 +18,30 @@
         body {
             background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
             color: #f0f0f0;
-            min-height: 100vh;
-            padding-bottom: 140px; /* 为底部播放器留出空间 */
-            overflow-x: hidden;
-            position: relative;
-            width: 100vw;
-            max-width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
+            position: relative;
         }
         
-        .container {
+        /* 主容器 - 使用flex布局分离内容区和播放器 */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
             max-width: 480px;
             margin: 0 auto;
-            padding: 15px;
             width: 100%;
             position: relative;
+        }
+        
+        /* 内容区域 - 可滚动部分 */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            padding-bottom: 20px; /* 为播放器留出空间 */
         }
         
         /* 固定头部 */
@@ -44,7 +53,7 @@
             backdrop-filter: blur(10px);
             border-bottom: 1px solid #333;
             padding: 0 15px 15px;
-            margin: 0 -15px;
+            margin: 0 -15px 15px;
         }
         
         /* 头部样式 */
@@ -98,9 +107,6 @@
             margin-bottom: 15px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             width: 100%;
-            position: sticky;
-            top: 75px;
-            z-index: 99;
         }
         
         .tab {
@@ -125,7 +131,6 @@
             display: none;
             animation: fadeIn 0.5s;
             width: 100%;
-            margin-top: 10px;
         }
         
         .page.active {
@@ -178,7 +183,7 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
             width: 100%;
         }
         
@@ -263,56 +268,21 @@
             cursor: pointer;
         }
         
-        /* 播放器控制区域 */
+        /* 播放器控制区域 - 固定在底部 */
         .player {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
             background: rgba(25, 25, 25, 0.95);
             backdrop-filter: blur(10px);
             border-top: 1px solid #333;
             padding: 15px 20px;
             z-index: 100;
             width: 100%;
-            max-width: 100vw;
             box-sizing: border-box;
-            transform: translateY(0);
-            transition: transform 0.3s ease;
-        }
-        
-        .player.minimized {
-            transform: translateY(calc(100% - 50px));
-        }
-        
-        .minimize-btn {
-            position: absolute;
-            top: -40px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 30px;
-            background: rgba(25, 25, 25, 0.95);
-            border-top-left-radius: 15px;
-            border-top-right-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-        
-        .minimize-btn i {
-            color: #aaa;
-            font-size: 18px;
-            transition: transform 0.3s;
-        }
-        
-        .player.minimized .minimize-btn i {
-            transform: rotate(180deg);
+            height: 200px;
+            flex-shrink: 0;
         }
         
         .progress-area {
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
         
         .progress-bar {
@@ -356,7 +326,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             gap: 25px;
         }
         
@@ -387,11 +357,10 @@
             font-size: 28px;
         }
         
-        /* 歌词区域 */
+        /* 歌词区域 - 修复滚动问题 */
         .lyrics-container {
-            height: 150px;
+            height: 80px;
             overflow-y: auto;
-            margin-top: 10px;
             padding: 10px;
             background: rgba(40, 40, 40, 0.6);
             border-radius: 10px;
@@ -414,6 +383,15 @@
             line-height: 1.8;
             color: #ccc;
             padding: 5px 0;
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .lyric-line {
+            padding: 3px 0;
+            transition: all 0.3s;
         }
         
         .current-lyric {
@@ -421,11 +399,10 @@
             font-weight: 600;
             font-size: 18px;
             text-shadow: 0 0 10px rgba(147, 112, 219, 0.7);
-            position: relative;
             padding: 5px 10px;
             border-radius: 8px;
             background: rgba(106, 90, 205, 0.2);
-            margin: 5px 0;
+            margin: 3px 0;
         }
         
         /* 空状态 */
@@ -467,6 +444,7 @@
             
             .player {
                 padding: 12px 15px;
+                height: 180px;
             }
             
             .controls {
@@ -482,8 +460,8 @@
                 height: 50px;
             }
             
-            .tabs {
-                top: 70px;
+            .lyrics-container {
+                height: 70px;
             }
         }
         
@@ -528,9 +506,8 @@
             background: #1a1a1a;
         }
         
-        body:fullscreen .container {
+        body:fullscreen .main-container {
             max-width: 100%;
-            padding: 20px;
         }
         
         body:fullscreen .player {
@@ -539,7 +516,7 @@
         }
         
         body:fullscreen .lyrics-container {
-            height: 200px;
+            height: 100px;
             font-size: 18px;
         }
         
@@ -590,91 +567,91 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="sticky-header">
-            <header>
-                <div class="logo">
-                    <i class="fas fa-music"></i>
-                    <h1>小鑫音乐播放器</h1>
+    <div class="main-container">
+        <!-- 内容区域 -->
+        <div class="content-area">
+            <div class="sticky-header">
+                <header>
+                    <div class="logo">
+                        <i class="fas fa-music"></i>
+                        <h1>小鑫音乐播放器</h1>
+                    </div>
+                    <div class="fullscreen-btn" id="fullscreen-btn">
+                        <i class="fas fa-expand"></i>
+                    </div>
+                </header>
+                
+                <!-- 导航栏 -->
+                <div class="tabs">
+                    <div class="tab active" data-tab="search">搜索</div>
+                    <div class="tab" data-tab="favorites">收藏</div>
+                    <div class="tab" data-tab="recent">最近播放</div>
                 </div>
-                <div class="fullscreen-btn" id="fullscreen-btn">
-                    <i class="fas fa-expand"></i>
-                </div>
-            </header>
-            
-            <!-- 固定导航栏 -->
-            <div class="tabs">
-                <div class="tab active" data-tab="search">搜索</div>
-                <div class="tab" data-tab="favorites">收藏</div>
-                <div class="tab" data-tab="recent">最近播放</div>
-            </div>
-        </div>
-        
-        <!-- 搜索页面 -->
-        <div id="search-page" class="page active">
-            <div class="search-box">
-                <input type="text" id="search-input" placeholder="搜索歌曲、歌手...">
-                <button id="search-btn">搜索</button>
             </div>
             
-            <div class="song-list" id="search-results">
-                <div class="empty-state">
-                    <i class="fas fa-search"></i>
-                    <h3>搜索您喜欢的音乐</h3>
-                    <p>输入关键词，点击搜索按钮开始</p>
+            <!-- 搜索页面 -->
+            <div id="search-page" class="page active">
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="搜索歌曲、歌手...">
+                    <button id="search-btn">搜索</button>
+                </div>
+                
+                <div class="song-list" id="search-results">
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <h3>搜索您喜欢的音乐</h3>
+                        <p>输入关键词，点击搜索按钮开始</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 收藏页面 -->
+            <div id="favorites-page" class="page">
+                <div class="song-list" id="favorites-list">
+                    <div class="empty-state">
+                        <i class="fas fa-heart"></i>
+                        <h3>暂无收藏歌曲</h3>
+                        <p>你可以在搜索页面将喜欢的歌曲添加到收藏</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 最近播放页面 -->
+            <div id="recent-page" class="page">
+                <div class="song-list" id="recent-list">
+                    <div class="empty-state">
+                        <i class="fas fa-history"></i>
+                        <h3>暂无最近播放</h3>
+                        <p>播放歌曲后，会显示在这里</p>
+                    </div>
                 </div>
             </div>
         </div>
         
-        <!-- 收藏页面 -->
-        <div id="favorites-page" class="page">
-            <div class="song-list" id="favorites-list">
-                <div class="empty-state">
-                    <i class="fas fa-heart"></i>
-                    <h3>暂无收藏歌曲</h3>
-                    <p>你可以在搜索页面将喜欢的歌曲添加到收藏</p>
+        <!-- 播放器控制区域 - 固定在底部 -->
+        <div class="player" id="player">
+            <div class="progress-area">
+                <div class="progress-bar">
+                    <div class="progress"></div>
+                </div>
+                <div class="timer">
+                    <span class="current-time">0:00</span>
+                    <span class="max-duration">0:00</span>
                 </div>
             </div>
-        </div>
-        
-        <!-- 最近播放页面 -->
-        <div id="recent-page" class="page">
-            <div class="song-list" id="recent-list">
-                <div class="empty-state">
-                    <i class="fas fa-history"></i>
-                    <h3>暂无最近播放</h3>
-                    <p>播放歌曲后，会显示在这里</p>
+            
+            <div class="controls">
+                <i class="fas fa-step-backward" id="prev-btn"></i>
+                <div class="play-pause">
+                    <i class="fas fa-play" id="play-pause-btn"></i>
                 </div>
+                <i class="fas fa-step-forward" id="next-btn"></i>
             </div>
-        </div>
-    </div>
-    
-    <!-- 播放器控制区域 -->
-    <div class="player minimized" id="player">
-        <div class="minimize-btn" id="minimize-btn">
-            <i class="fas fa-chevron-up"></i>
-        </div>
-        <div class="progress-area">
-            <div class="progress-bar">
-                <div class="progress"></div>
-            </div>
-            <div class="timer">
-                <span class="current-time">0:00</span>
-                <span class="max-duration">0:00</span>
-            </div>
-        </div>
-        
-        <div class="controls">
-            <i class="fas fa-step-backward" id="prev-btn"></i>
-            <div class="play-pause">
-                <i class="fas fa-play" id="play-pause-btn"></i>
-            </div>
-            <i class="fas fa-step-forward" id="next-btn"></i>
-        </div>
-        
-        <div class="lyrics-container" id="lyrics-container">
-            <div class="lyrics" id="lyrics-display">
-                <p>歌词加载中...</p>
+            
+            <div class="lyrics-container" id="lyrics-container">
+                <div class="lyrics" id="lyrics-display">
+                    <p>歌词加载中...</p>
+                </div>
             </div>
         </div>
     </div>
@@ -700,8 +677,6 @@
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const fullscreenBtn = document.getElementById('fullscreen-btn');
-        const minimizeBtn = document.getElementById('minimize-btn');
-        const player = document.getElementById('player');
         
         // 状态管理
         let playerState = {
@@ -713,8 +688,7 @@
             currentLyrics: [],
             searchResults: [],
             lastLyricIndex: -1,
-            isFullscreen: false,
-            playerMinimized: true
+            isFullscreen: false
         };
         
         // 创建加载指示器
@@ -796,9 +770,6 @@
             // 全屏按钮
             fullscreenBtn.addEventListener('click', toggleFullscreen);
             
-            // 最小化按钮
-            minimizeBtn.addEventListener('click', togglePlayerMinimize);
-            
             // 音频播放器事件
             audioPlayer.addEventListener('timeupdate', updateProgress);
             audioPlayer.addEventListener('ended', playNext);
@@ -827,17 +798,7 @@
             }
         }
         
-        // 切换播放器最小化状态
-        function togglePlayerMinimize() {
-            playerState.playerMinimized = !playerState.playerMinimized;
-            if (playerState.playerMinimized) {
-                player.classList.add('minimized');
-            } else {
-                player.classList.remove('minimized');
-            }
-        }
-        
-        // 处理音频错误
+        // 处理音频错误 - 自动切换到下一首
         function handleAudioError() {
             if (!playerState.currentSong) return;
             
@@ -864,7 +825,8 @@
                             playerState.isPlaying = true;
                         }).catch(err => {
                             console.error('备用播放地址播放失败:', err);
-                            alert('播放失败，请尝试其他歌曲');
+                            // 播放失败时自动切换到下一首
+                            playNext();
                         });
                     } else {
                         throw new Error('无法从备用API获取有效播放地址');
@@ -872,7 +834,8 @@
                 })
                 .catch(error => {
                     console.error('获取备用播放地址失败:', error);
-                    alert('播放失败，请尝试其他歌曲');
+                    // 播放失败时自动切换到下一首
+                    playNext();
                 })
                 .finally(() => {
                     removeLoadingIndicator(loading);
@@ -907,7 +870,7 @@
             searchResults.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><h3>搜索中...</h3></div>';
             
             // 调用API
-            fetch(`https://www.hhlqilongzhu.cn/api/dg_kugouSQ.php?msg=${encodeURIComponent(query)}&n=&num=200&type=json&quality=320`)
+            fetch(`https://www.hhlqilongzhu.cn/api/dg_kugouSQ.php?msg=${encodeURIComponent(query)}&n=&num=100&type=json&quality=320`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.data && data.data.length > 0) {
@@ -1008,8 +971,6 @@
                     };
                     
                     // 更新UI
-                    player.classList.remove('minimized');
-                    playerState.playerMinimized = false;
                     audioPlayer.src = playerState.currentSong.music_url;
                     
                     // 播放歌曲
@@ -1125,13 +1086,13 @@
             
             let lyricsHTML = '';
             playerState.currentLyrics.forEach((line, index) => {
-                lyricsHTML += `<p class="lyric-line" data-time="${line.time}">${line.text}</p>`;
+                lyricsHTML += `<div class="lyric-line" data-time="${line.time}">${line.text}</div>`;
             });
             
             lyricsDisplay.innerHTML = lyricsHTML;
         }
         
-        // 更新歌词显示 - 修复滚动问题
+        // 更新歌词显示 - 完全修复的版本
         function updateLyrics(currentTime) {
             const lines = document.querySelectorAll('.lyric-line');
             if (lines.length === 0) return;
@@ -1157,17 +1118,21 @@
                     if (currentLineIndex !== playerState.lastLyricIndex) {
                         playerState.lastLyricIndex = currentLineIndex;
                         
-                        // 计算滚动位置 - 修复滚动过多问题
-                        const lineHeight = line.offsetHeight;
-                        const containerHeight = lyricsContainer.clientHeight;
-                        const lineOffsetTop = line.offsetTop;
+                        // 获取歌词容器和行元素
+                        const container = lyricsContainer;
+                        const lineElem = line;
                         
-                        // 计算目标滚动位置（使当前行在容器中间）
-                        const targetScrollTop = lineOffsetTop - containerHeight / 2 + lineHeight / 2;
+                        // 计算容器中间位置
+                        const containerHeight = container.clientHeight;
+                        const lineOffsetTop = lineElem.offsetTop;
+                        const lineHeight = lineElem.offsetHeight;
+                        
+                        // 计算目标位置（使当前行在容器中间）
+                        const targetPosition = lineOffsetTop - (containerHeight / 2) + (lineHeight / 2);
                         
                         // 平滑滚动到目标位置
-                        lyricsContainer.scrollTo({
-                            top: targetScrollTop,
+                        container.scrollTo({
+                            top: targetPosition,
                             behavior: 'smooth'
                         });
                     }
@@ -1266,7 +1231,7 @@
             playSong(prevSong);
         }
         
-        // 播放下一首
+        // 播放下一首 - 处理播放失败时自动切换
         function playNext() {
             if (!playerState.currentSong) return;
             
