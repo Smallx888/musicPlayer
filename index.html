@@ -613,7 +613,7 @@
             searchResults.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><h3>搜索中...</h3></div>';
             
             // 调用API
-            fetch(`https://www.hhlqilongzhu.cn/api/dg_kugouSQ.php?msg=${encodeURIComponent(query)}&n=&num=10&type=json&quality=320`)
+            fetch(`https://www.hhlqilongzhu.cn/api/dg_kugouSQ.php?msg=${encodeURIComponent(query)}&n=&num=200&type=json&quality=320`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.data && data.data.length > 0) {
